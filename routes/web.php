@@ -5,7 +5,10 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Volt\Volt;
 
 Route::get('/', function () {
-    return view('welcome');
+    if (\Illuminate\Support\Facades\Auth::check()) {
+        return redirect()->route('dashboard');
+    }
+    return redirect()->route('login');
 })->name('home');
 
 // Serve storage files with CORS headers (for development server)
@@ -38,7 +41,9 @@ Route::match(['GET', 'OPTIONS'], '/storage/{path}', function (string $path) {
 })->where('path', '.*');
 
 Route::middleware(['auth', 'verified', 'password.confirm'])->group(function () {
-    Volt::route('dashboard', 'dashboard')->name('dashboard');
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
     Volt::route('profile', 'settings.profile')->name('profile.edit');
     Volt::route('two-factor', 'settings.two-factor')->name('two-factor.show');
 
