@@ -45,7 +45,9 @@ Route::middleware(['auth', 'verified', 'password.confirm'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
     Volt::route('profile', 'settings.profile')->name('profile.edit');
+    Volt::route('user-password', 'settings.password')->name('user-password.edit');
     Volt::route('two-factor', 'settings.two-factor')->name('two-factor.show');
+    Volt::route('appearance', 'settings.appearance')->name('appearance.edit');
 
     // Admin Dashboard Routes (Require 2FA)
     Route::prefix('admin')->name('admin.')->middleware('require.2fa')->group(function () {
