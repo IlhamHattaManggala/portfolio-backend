@@ -124,7 +124,7 @@ new class extends Component {
     }
 }; ?>
 
-<section class="w-full">
+<section class="w-full" wire:poll.5s="loadTechnologies">
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-bold">Technologies Management</h1>

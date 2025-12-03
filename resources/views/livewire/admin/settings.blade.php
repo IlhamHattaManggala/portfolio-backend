@@ -31,6 +31,11 @@ new class extends Component {
         'about_description' => ['type' => 'text', 'group' => 'about', 'label' => 'About Description', 'description' => 'Deskripsi untuk section "Tentang Saya"'],
         'footer_description' => ['type' => 'textarea', 'group' => 'general', 'label' => 'Footer Description', 'description' => 'Deskripsi yang ditampilkan di footer'],
         'resume_pdf' => ['type' => 'file', 'group' => 'general', 'label' => 'Resume PDF', 'description' => 'File PDF untuk download resume'],
+        'cta_enabled' => ['type' => 'text', 'group' => 'cta', 'label' => 'CTA Enabled', 'description' => 'Aktifkan/nonaktifkan Call to Action (true/false)'],
+        'cta_title' => ['type' => 'text', 'group' => 'cta', 'label' => 'CTA Title', 'description' => 'Judul untuk Call to Action'],
+        'cta_description' => ['type' => 'textarea', 'group' => 'cta', 'label' => 'CTA Description', 'description' => 'Deskripsi untuk Call to Action'],
+        'cta_button_text' => ['type' => 'text', 'group' => 'cta', 'label' => 'CTA Button Text', 'description' => 'Teks untuk tombol CTA'],
+        'cta_link' => ['type' => 'text', 'group' => 'cta', 'label' => 'CTA Link', 'description' => 'Link untuk tombol CTA'],
     ];
 
     public function mount()
@@ -62,6 +67,16 @@ new class extends Component {
                     $this->form[$key] = 'Saya adalah seorang yang berfokus pada pengembangan website serta aplikasi mobile. Saya memiliki ketertarikan besar terhadap teknologi web dan mobile, khususnya dalam pengembangan menggunakan Flask, Laravel, React, Flutter, Bootstrap, dan Tailwind CSS.';
                 } elseif ($key === 'footer_description') {
                     $this->form[$key] = 'Web & Flutter Developer yang berfokus pada solusi digital modern, antarmuka yang bersih, dan performa yang optimal.';
+                } elseif ($key === 'cta_enabled') {
+                    $this->form[$key] = 'true';
+                } elseif ($key === 'cta_title') {
+                    $this->form[$key] = 'Butuh Jasa Pembuatan Website & Aplikasi?';
+                } elseif ($key === 'cta_description') {
+                    $this->form[$key] = 'Kami menyediakan jasa pembuatan website, aplikasi mobile, dan solusi digital lainnya dengan kualitas terbaik.';
+                } elseif ($key === 'cta_button_text') {
+                    $this->form[$key] = 'Hubungi Sekarang';
+                } elseif ($key === 'cta_link') {
+                    $this->form[$key] = 'https://baharistack.wuaze.com/?i=1';
                 }
             }
             
@@ -451,6 +466,45 @@ new class extends Component {
                     label="Phone" 
                     type="tel"
                     placeholder="+62 123 456 7890"
+                />
+            </div>
+        </div>
+
+        <!-- Call to Action (CTA) Settings -->
+        <div class="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-6">
+            <h2 class="text-lg font-semibold mb-4">Call to Action (CTA)</h2>
+            <div class="space-y-4">
+                <flux:input 
+                    wire:model="form.cta_enabled" 
+                    label="CTA Enabled" 
+                    placeholder="true"
+                    hint="Aktifkan/nonaktifkan CTA (true/false)"
+                />
+                <flux:input 
+                    wire:model="form.cta_title" 
+                    label="CTA Title" 
+                    placeholder="Butuh Jasa Pembuatan Website & Aplikasi?"
+                    hint="Judul untuk Call to Action"
+                />
+                <flux:textarea 
+                    wire:model="form.cta_description" 
+                    label="CTA Description"
+                    placeholder="Kami menyediakan jasa pembuatan website, aplikasi mobile, dan solusi digital lainnya dengan kualitas terbaik."
+                    hint="Deskripsi untuk Call to Action"
+                    rows="3"
+                />
+                <flux:input 
+                    wire:model="form.cta_button_text" 
+                    label="CTA Button Text" 
+                    placeholder="Hubungi Sekarang"
+                    hint="Teks untuk tombol CTA"
+                />
+                <flux:input 
+                    wire:model="form.cta_link" 
+                    label="CTA Link" 
+                    type="url"
+                    placeholder="https://baharistack.wuaze.com/?i=1"
+                    hint="Link untuk tombol CTA"
                 />
             </div>
         </div>

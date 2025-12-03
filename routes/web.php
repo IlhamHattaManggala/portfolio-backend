@@ -41,9 +41,7 @@ Route::match(['GET', 'OPTIONS'], '/storage/{path}', function (string $path) {
 })->where('path', '.*');
 
 Route::middleware(['auth', 'verified', 'password.confirm'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Volt::route('dashboard', 'dashboard')->name('dashboard');
     Volt::route('profile', 'settings.profile')->name('profile.edit');
     Volt::route('user-password', 'settings.password')->name('user-password.edit');
     Volt::route('two-factor', 'settings.two-factor')->name('two-factor.show');

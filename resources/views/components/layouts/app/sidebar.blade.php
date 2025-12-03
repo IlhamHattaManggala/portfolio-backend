@@ -22,16 +22,19 @@
                     <flux:navlist.item icon="book-open-text" :href="route('admin.certificates.index')" :current="request()->routeIs('admin.certificates.*')" wire:navigate>{{ __('Certificates') }}</flux:navlist.item>
                     <flux:navlist.item icon="tag" :href="route('admin.categories.index')" :current="request()->routeIs('admin.categories.*')" wire:navigate>{{ __('Categories') }}</flux:navlist.item>
                     <flux:navlist.item icon="envelope" :href="route('admin.messages.index')" :current="request()->routeIs('admin.messages.*')" wire:navigate>
-                        {{ __('Messages') }}
-                        @if(\App\Models\Message::where('is_read', false)->count() > 0)
-                            <span class="ms-2 rounded-full bg-red-500 text-white text-xs px-2 py-0.5">
-                                {{ \App\Models\Message::where('is_read', false)->count() }}
-                            </span>
-                        @endif
+                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                            <span>{{ __('Messages') }}</span>
+                            @livewire('components.sidebar-messages-badge')
+                        </div>
                     </flux:navlist.item>
                     <flux:navlist.item icon="cog" :href="route('admin.settings.index')" :current="request()->routeIs('admin.settings.*')" wire:navigate>{{ __('Frontend Settings') }}</flux:navlist.item>
                     <flux:navlist.item icon="briefcase" :href="route('admin.experiences.index')" :current="request()->routeIs('admin.experiences.*')" wire:navigate>{{ __('Experiences') }}</flux:navlist.item>
-                    <flux:navlist.item icon="star" :href="route('admin.testimonials.index')" :current="request()->routeIs('admin.testimonials.*')" wire:navigate>{{ __('Testimonials') }}</flux:navlist.item>
+                    <flux:navlist.item icon="star" :href="route('admin.testimonials.index')" :current="request()->routeIs('admin.testimonials.*')" wire:navigate>
+                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                            <span>{{ __('Testimonials') }}</span>
+                            @livewire('components.sidebar-testimonials-badge')
+                        </div>
+                    </flux:navlist.item>
                     <flux:navlist.item icon="document-text" :href="route('admin.articles.index')" :current="request()->routeIs('admin.articles.*')" wire:navigate>{{ __('Articles') }}</flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
