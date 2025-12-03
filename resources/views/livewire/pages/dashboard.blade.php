@@ -11,6 +11,13 @@ use Livewire\Volt\Component;
 new class extends Component {
     public $stats = [];
 
+    public function with(): array
+    {
+        return [
+            'title' => __('Dashboard'),
+        ];
+    }
+
     public function mount()
     {
         $this->loadStats();
@@ -18,6 +25,43 @@ new class extends Component {
 
     public function loadStats()
     {
+        // Visitor data for last 7 days
+        $last7Days = [];
+        $last7DaysVisitors = [];
+        $last7DaysUnique = [];
+        
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i);
+            $dateStr = $date->format('Y-m-d');
+            $dayName = $date->format('D');
+            
+            $last7Days[] = $dayName;
+            $last7DaysVisitors[] = Visitor::whereDate('visited_at', $dateStr)->count();
+            $last7DaysUnique[] = Visitor::where('is_unique', true)
+                ->whereDate('visited_at', $dateStr)
+                ->count();
+        }
+
+        // Visitor data for last 6 months
+        $last6Months = [];
+        $last6MonthsVisitors = [];
+        $last6MonthsUnique = [];
+        
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $monthStr = $date->format('Y-m');
+            $monthName = $date->format('M Y');
+            
+            $last6Months[] = $monthName;
+            $last6MonthsVisitors[] = Visitor::whereYear('visited_at', $date->year)
+                ->whereMonth('visited_at', $date->month)
+                ->count();
+            $last6MonthsUnique[] = Visitor::where('is_unique', true)
+                ->whereYear('visited_at', $date->year)
+                ->whereMonth('visited_at', $date->month)
+                ->count();
+        }
+
         $this->stats = [
             'projects' => Project::count(),
             'technologies' => Technology::count(),
@@ -33,12 +77,20 @@ new class extends Component {
                 ->count(),
             'this_week_visitors' => Visitor::where('visited_at', '>=', now()->startOfWeek())->count(),
             'this_month_visitors' => Visitor::where('visited_at', '>=', now()->startOfMonth())->count(),
+            'last_7_days_labels' => $last7Days,
+            'last_7_days_visitors' => $last7DaysVisitors,
+            'last_7_days_unique' => $last7DaysUnique,
+            'last_6_months_labels' => $last6Months,
+            'last_6_months_visitors' => $last6MonthsVisitors,
+            'last_6_months_unique' => $last6MonthsUnique,
         ];
     }
-}; ?>
 
-<x-layouts.app :title="__('Dashboard')">
-    <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl" wire:poll.5s="loadStats">
+};
+?>
+
+<section class="w-full" wire:poll.5s="loadStats">
+    <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
         <div class="mb-6">
             <h1 class="text-2xl font-bold mb-2">Admin Dashboard</h1>
             <p class="text-sm text-zinc-600 dark:text-zinc-400">Manage your portfolio content</p>
@@ -140,6 +192,24 @@ new class extends Component {
             </a>
         </div>
         
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <!-- Visitor Chart - Last 7 Days -->
+            <div class="relative h-full overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-6">
+                <h3 class="text-lg font-semibold mb-4">Visitor Statistics - Last 7 Days</h3>
+                <div class="h-64">
+                    <canvas id="visitorChart7Days"></canvas>
+                </div>
+            </div>
+
+            <!-- Visitor Chart - Last 6 Months -->
+            <div class="relative h-full overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-6">
+                <h3 class="text-lg font-semibold mb-4">Visitor Statistics - Last 6 Months</h3>
+                <div class="h-64">
+                    <canvas id="visitorChart6Months"></canvas>
+                </div>
+            </div>
+        </div>
+
         <div class="relative h-full flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-6">
             <h3 class="text-lg font-semibold mb-4">API Endpoints</h3>
             <div class="space-y-2 text-sm">
@@ -170,5 +240,172 @@ new class extends Component {
             </div>
         </div>
     </div>
-</x-layouts.app>
+</section>
 
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    let chart7Days = null;
+    let chart6Months = null;
+
+    function initCharts() {
+        // Destroy existing charts if they exist
+        if (chart7Days) {
+            chart7Days.destroy();
+        }
+        if (chart6Months) {
+            chart6Months.destroy();
+        }
+
+        // Get data from Livewire
+        const stats = @json($stats);
+        
+        // Chart colors for dark mode
+        const isDark = document.documentElement.classList.contains('dark');
+        const textColor = isDark ? '#e4e4e7' : '#27272a';
+        const gridColor = isDark ? '#3f3f46' : '#e4e4e7';
+        
+        // Chart 1: Last 7 Days
+        const ctx7Days = document.getElementById('visitorChart7Days');
+        if (ctx7Days) {
+            chart7Days = new Chart(ctx7Days, {
+                type: 'line',
+                data: {
+                    labels: stats.last_7_days_labels || [],
+                    datasets: [
+                        {
+                            label: 'Total Visitors',
+                            data: stats.last_7_days_visitors || [],
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Unique Visitors',
+                            data: stats.last_7_days_unique || [],
+                            borderColor: 'rgb(34, 197, 94)',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: textColor
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: textColor,
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Chart 2: Last 6 Months
+        const ctx6Months = document.getElementById('visitorChart6Months');
+        if (ctx6Months) {
+            chart6Months = new Chart(ctx6Months, {
+                type: 'bar',
+                data: {
+                    labels: stats.last_6_months_labels || [],
+                    datasets: [
+                        {
+                            label: 'Total Visitors',
+                            data: stats.last_6_months_visitors || [],
+                            backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                            borderColor: 'rgb(59, 130, 246)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Unique Visitors',
+                            data: stats.last_6_months_unique || [],
+                            backgroundColor: 'rgba(34, 197, 94, 0.6)',
+                            borderColor: 'rgb(34, 197, 94)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: textColor
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: textColor,
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // Initialize charts on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        initCharts();
+    });
+
+    // Re-initialize charts when Livewire updates
+    document.addEventListener('livewire:init', function() {
+        Livewire.hook('morph.updated', ({ el, component }) => {
+            if (component.getName() === 'pages.dashboard') {
+                setTimeout(() => {
+                    initCharts();
+                }, 100);
+            }
+        });
+    });
+</script>
+@endpush
