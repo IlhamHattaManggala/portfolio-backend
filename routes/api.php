@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\TechnologyController;
 use App\Http\Controllers\Api\TestimonialController;
+use App\Http\Controllers\Api\VisitorController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -46,6 +47,9 @@ Route::prefix('v1')->group(function () {
     // Articles API
     Route::get('/articles', [ArticleController::class, 'index']);
     Route::get('/articles/{id}', [ArticleController::class, 'show']); // Can use slug or id
+    
+    // Visitors API (Public - untuk tracking)
+    Route::post('/visitors/track', [VisitorController::class, 'track']);
 });
 
 // Admin routes (protected by auth middleware and require 2FA)
@@ -76,5 +80,8 @@ Route::middleware(['auth', 'require.2fa'])->prefix('v1/admin')->group(function (
     
     // Articles Admin API
     Route::apiResource('articles', ArticleController::class);
+    
+    // Visitors Admin API
+    Route::get('/visitors/stats', [VisitorController::class, 'stats']);
 });
 

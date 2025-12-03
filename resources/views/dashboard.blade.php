@@ -12,7 +12,7 @@
             </flux:callout>
         @endif
         
-        <div class="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div class="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             <a href="{{ route('admin.projects.index') }}" class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-6 hover:border-neutral-300 dark:hover:border-neutral-600 transition-colors">
                 <div class="flex flex-col h-full justify-between">
                     <div>
@@ -79,6 +79,21 @@
                     </div>
                 </div>
             </a>
+            
+            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-6">
+                <div class="flex flex-col h-full justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-2">Visitors</h3>
+                        <p class="text-sm text-zinc-600 dark:text-zinc-400">Total website visitors</p>
+                    </div>
+                    <div class="text-2xl font-bold text-teal-600 dark:text-teal-400">
+                        {{ \App\Models\Visitor::count() }}
+                    </div>
+                    <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                        Today: {{ \App\Models\Visitor::whereDate('visited_at', today())->count() }}
+                    </div>
+                </div>
+            </div>
         </div>
         
         <div class="relative h-full flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-6">
