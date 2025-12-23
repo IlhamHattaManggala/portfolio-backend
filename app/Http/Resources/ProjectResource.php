@@ -21,6 +21,7 @@ class ProjectResource extends JsonResource
             'tipe' => $this->tipe,
             'library' => $this->library,
             'image' => $this->image ? $this->getFullStorageUrl($request, $this->image) : null,
+            'link' => $this->link,
             'order' => $this->order,
             'is_active' => $this->is_active,
             'technologies' => TechnologyResource::collection($this->whenLoaded('technologies')),

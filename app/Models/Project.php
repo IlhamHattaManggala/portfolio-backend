@@ -15,6 +15,7 @@ class Project extends Model
         'tipe',
         'library',
         'image',
+        'link',
         'order',
         'is_active',
     ];

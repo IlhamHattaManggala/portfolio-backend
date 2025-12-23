@@ -19,6 +19,7 @@ new class extends Component {
         'library' => [],
         'library_item' => '',
         'image' => null,
+        'link' => '',
         'order' => 0,
         'is_active' => true,
         'technology_ids' => [],
@@ -51,6 +52,7 @@ new class extends Component {
                 'library' => $project->library ?? [],
                 'library_item' => '',
                 'image' => null,
+                'link' => $project->link ?? '',
                 'order' => $project->order,
                 'is_active' => $project->is_active,
                 'technology_ids' => $project->technologies->pluck('id')->toArray(),
@@ -76,6 +78,7 @@ new class extends Component {
             'library' => [],
             'library_item' => '',
             'image' => null,
+            'link' => '',
             'order' => 0,
             'is_active' => true,
             'technology_ids' => [],
@@ -117,6 +120,7 @@ new class extends Component {
             'form.tipe' => 'required|string|max:255',
             'form.library' => 'required|array|min:1',
             'form.image' => 'nullable|image|max:2048',
+            'form.link' => 'nullable|url|max:500',
             'form.order' => 'nullable|integer',
         ]);
 
@@ -125,6 +129,7 @@ new class extends Component {
             'descriptions' => $this->form['descriptions'],
             'tipe' => $this->form['tipe'],
             'library' => $this->form['library'],
+            'link' => $this->form['link'] ?? null,
             'order' => $this->form['order'] ?? 0,
             'is_active' => $this->form['is_active'],
         ];
@@ -271,6 +276,8 @@ new class extends Component {
                     @endif
                     <flux:input type="file" wire:model="form.image" accept="image/*" />
                 </div>
+
+                <flux:input wire:model="form.link" label="Link" type="url" placeholder="https://example.com" />
 
                 <flux:input type="number" wire:model="form.order" label="Order" />
                 <flux:checkbox wire:model="form.is_active" label="Active" />

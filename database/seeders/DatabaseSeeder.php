@@ -15,20 +15,10 @@ class DatabaseSeeder extends Seeder
     {
         // Create default admin user
         User::firstOrCreate(
-            ['email' => 'admin@example.com'],
+            ['email' => 'ilhamhattamanggala123@gmail.com'],
             [
-                'name' => 'Admin User',
-                'password' => Hash::make('password'),
-                'email_verified_at' => now(),
-            ]
-        );
-
-        // Create test user (optional)
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test User',
-                'password' => Hash::make('password'),
+                'name' => 'Ilham Hatta',
+                'password' => Hash::make('Ilham311202.'),
                 'email_verified_at' => now(),
             ]
         );
